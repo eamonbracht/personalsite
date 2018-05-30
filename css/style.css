@@ -2,7 +2,7 @@ body {
   font: 15px/1.5 Arial, Helvetica, sans-serif;
   padding: 0;
   margin: 0;
-  background-color: #f4f4f4
+  background-color: #ffffff
 }
 
 .container {
@@ -13,10 +13,34 @@ body {
 
 .dark{
   padding: 15px;
-  background: #354248;
+  background: #bbbbbb;
   color:#ffffff;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+/* Highlighting */
+#highlighted {
+  background-color: rgba(255,235,0, .7);
+}
+#notrans {
+  background-color: #ffeb00
+}
+/* span {
+    background-color: #ffeb00
+} */
+
+
+#main a{
+  font-size: 30pt;
+  background-color: #ffeb00;
+  font-style: italic;
+  text-decoration: none;
+  color: black;
+}
+}
+#main a:visited {
+  color: black;
 }
 
 ul {
@@ -25,15 +49,15 @@ ul {
 }
 /* Header */
 header{
-  background: #f4f4f4;
-  color: #ffffff;
+  background: #ffffff;
+  color: #2c4061;
   padding-top: 30px;
   min-height: 70px;
   border-bottom: #2c4061 3px solid;
 }
 
 header a{
-  color: #ffffff;
+  color: #2c4061;
   text-decoration: none;
   text-transform: uppercase;
   font-size: 16px;
@@ -67,52 +91,44 @@ header a:hover{
   color: #cccccc;
   font-weight: bold;
 }
-
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+    line-height: 75%;
+}
 /* Showcase */
 
 #showcase{
-  min-height: 800px;
-  background-image:url('../img/trees.jpg');
+  min-height: 600px;
+  background-image:url('../img/mountains.JPG');
   background-size: cover;
   text-align: center;
   color: #ffffff;
 }
 #showcase h1 {
-  margin-top: 100px;
-  font-size: 55px;
-  margin-bottom: 10px;
+  margin-top: 20px;
+  font-size: 60px;
+  margin-bottom: 20px;
 }
 #showcase p{
   font-size: 20px;
+  /* vertical-align: middle; */
 }
 
-#newsletter{
-  padding: 15px;
+/*project headers */
+#projcase{
+  min-height: 600px;
+  background-image:url('../img/montana.jpeg');
+  background-size: cover;
+  text-align: center;
   color: #ffffff;
-  background-color: #353637;
 }
-
-#newsletter h1{
-  float: left;
-}
-
-#newsletter form{
-  float: right;
-  margin-top: 15px
-}
-
-#newsletter input[type="email"]{
-  padding: 4px;
-  height: 25px;
-  width: 250px;
-}
-.button_1{
-  height: 38px;
-  background: #cccccc;
-  border: 0;
-  padding-left: 20px;
-  padding-right: 20px;
-  color: #353637;
+#projcase h1 {
+  margin-top: 300px;
+  font-size: 60px;
+  margin-bottom: 20px;
 }
 
 #boxes{
@@ -124,16 +140,19 @@ header a:hover{
   width: 30%;
   padding: 10px;
 }
+#boxes h3 {
+
+}
 
 footer{
   padding: 20px;
   margin-top: 20px;
-  color: #ffffff;
-  background-color: #32a0c2;
+  color: #000000;
+  background-color: #f4f4f4;
   text-align: center;
 }
-/*sidebar */
 
+/*sidebar */
 aside#sidebar{
   float:right;
   width: 30%;
@@ -144,6 +163,36 @@ article#main-col{
   width: 65%;
 }
 
+article#code-col{
+  float:left;
+  width:45%;
+}
+article#graph-col{
+  float:right;
+  width:40%;
+}
+
+aside#code-col input, aside#code-col textarea {
+  width: 90%;
+  padding: 25px;
+}
+aside#graph-col input, aside#graph-col textarea {
+  width: 90%;
+  padding: 25px;
+}
+
+.borderstyle{
+  border-style: solid;
+  border-color: #ffeb00:
+}
+
+code {
+  font-size: 10px;
+}
+
+article#leftcol
+
+
 aside#sidebar input, aside#sidebar textarea {
   width: 90%;
   padding: 5px;
@@ -153,13 +202,14 @@ aside#sidebar input, aside#sidebar textarea {
 ul#more li{
   list-style: none;
   padding: 20px;
-  border: #cccccc solid 1px;
+  /* border: #cccccc solid 1px; */
   margin-bottom: 5px;
-  background: #32a0c2;
+  /* background: #bbbbbb; */
 }
 
 ul#more h3{
-  border-bottom: #353637 solid 1px;
+  border-bottom: #353637 solid 1px
+  /* background-color: #ffeb00 */
 
 }
 @media(max-width: 768px) {
@@ -183,14 +233,16 @@ header {
 #showcase h1 {
   margin-top: 40px;
 }
-#newsletter button {
-  display: block;
-  width: 100%;
+
+#page-title{
+  margin-top: 50px;
 }
 
-#newsletter form input[type="email"], .contact input, .contact textarea,
-.contact label{
-  width: 100%;
-  margin-bottom: 5px;
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
+
 }
