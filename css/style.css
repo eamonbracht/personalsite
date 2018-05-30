@@ -213,6 +213,8 @@ ul#more h3{
 
 }
 @media(max-width: 768px) {
+  article#code-col,
+  aside#graph-col,
   header #branding,
   header nav,
   header nav li,
