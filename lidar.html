@@ -1,0 +1,306 @@
+<head>
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="./favicon_io/apple-touch-icon.png"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="./favicon_io/favicon-32x32.png"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="./favicon_io/favicon-16x16.png"
+  />
+  <link rel="manifest" href="./favicon_io/site.webmanifest" />
+  <link rel="stylesheet" href="./css/projects.css" />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"
+    async
+  ></script>
+  <link
+    href="https://fonts.googleapis.com/css?family=Comfortaa|Roboto+Mono"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+    crossorigin="anonymous"
+  ></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  <link rel="stylesheet" type="text/css" href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="./index.html">Eamon Bracht</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarTogglerDemo02"
+      aria-controls="navbarTogglerDemo02"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a class="nav-link" href="./projects.html">Projects<span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="code">
+    <h3 id="projhead">
+      KITTI Lidar Data Visualization
+    </h3>
+    <hr>
+<p>
+In this post, we will import, parse and visualize <a id = "inline" href = "http://www.cvlibs.net/datasets/kitti/raw_data.php">KITTI LIDAR</a> data using the <span style="font-weight:bold">pykitti</span> library. 
+</p>
+<h4>Implementation</h4>
+<hr>
+Begin by install <a id = "inline" href = "https://pypi.org/project/pykitti/">pykitti</a> and a LIDAR dataset of your choice which can be found <a id = "inline" href = "http://www.cvlibs.net/datasets/kitti/raw_data.php">here</a>. The code below is a varation on
+the sample code provided in the <a id = "inline" href = "https://github.com/utiasSTARS/pykitti">documentation</a> for the library.  
+<pre>
+  import numpy as np
+  import pykitti
+  
+  # Change this to the directory where you store KITTI data
+  basedir = './data'
+  
+  def load_dataset(date, drive, calibrated=False, frame_range=None):
+      """
+          Loads the dataset with `date` and `drive`.
+          
+          Parameters
+          ----------
+          date        : Dataset creation date.
+          drive       : Dataset drive.
+          calibrated  : Flag indicating if we need to parse calibration data. Defaults to `False`.
+          frame_range : Range of frames. Defaults to `None`.
+          
+          Returns
+          -------
+          Loaded dataset of type `raw`.
+          """
+      dataset = pykitti.raw(basedir, date, drive)
+      
+      # Load the data
+      if calibrated:
+          dataset.load_calib()  # Calibration data are accessible as named tuples
+      
+      np.set_printoptions(precision=4, suppress=True)
+      print('\nDrive: ' + str(dataset.drive))
+      print('\nFrame range: ' + str(dataset.frames))
+  
+      if calibrated:
+          print('\nIMU-to-Velodyne transformation:\n' + str(dataset.calib.T_velo_imu))
+          print('\nGray stereo pair baseline [m]: ' + str(dataset.calib.b_gray))
+          print('\nRGB stereo pair baseline [m]: ' + str(dataset.calib.b_rgb))
+      
+      return dataset
+</pre>
+<h4>XML Parsing</h4><hr>
+<p>In order to make use of this information, we have to parse XML files containing tracklet info. Fortunately, there already exists a method for parsing tracklets (e.g. dataset labels) originally created by Christian Herdtweck at the Max Planck Institute for Biological Cybernetics. 
+  It can be downloaded <a id = "inline" href = "http://cvlibs.net/datasets/kitti/downloads/parseTrackletXML.p">here</a>. Include this .py file in the root directory of your project.
+  </p>
+<pre>
+import parseTrackletXML as xmlParser
+
+def load_tracklets_for_frames(n_frames, xml_path):
+    """
+        Loads dataset labels also referred to as tracklets, saving them individually for each frame.
+        
+        Parameters
+        ----------
+        n_frames    : Number of frames in the dataset.
+        xml_path    : Path to the tracklets XML.
+        
+        Returns
+        -------
+        Tuple of dictionaries with integer keys corresponding to absolute frame numbers and arrays as values. First array
+        contains coordinates of bounding box vertices for each object in the frame, and the second array contains objects
+        types as strings.
+        """
+    tracklets = xmlParser.parseXML(xml_path)
+    
+    frame_tracklets = {}
+    frame_tracklets_types = {}
+    for i in range(n_frames):
+        frame_tracklets[i] = []
+        frame_tracklets_types[i] = []
+
+    # loop over tracklets
+    for i, tracklet in enumerate(tracklets):
+        # this part is inspired by kitti object development kit matlab code: computeBox3D
+        h, w, l = tracklet.size
+        # in velodyne coordinates around zero point and without orientation yet
+        trackletBox = np.array([
+                                [-l / 2, -l / 2, l / 2, l / 2, -l / 2, -l / 2, l / 2, l / 2],
+                                [w / 2, -w / 2, -w / 2, w / 2, w / 2, -w / 2, -w / 2, w / 2],
+                                [0.0, 0.0, 0.0, 0.0, h, h, h, h]
+                                ])
+        # loop over all data in tracklet
+        for translation, rotation, state, occlusion, truncation, amtOcclusion, amtBorders, absoluteFrameNumber in tracklet:
+            # determine if object is in the image; otherwise continue
+            if truncation not in (xmlParser.TRUNC_IN_IMAGE, xmlParser.TRUNC_TRUNCATED):
+                continue
+            # re-create 3D bounding box in velodyne coordinate system
+            yaw = rotation[2]  # other rotations are supposedly 0
+            assert np.abs(rotation[:2]).sum() == 0, 'object rotations other than yaw given!'
+            rotMat = np.array([[np.cos(yaw), -np.sin(yaw), 0.0],
+                                [np.sin(yaw), np.cos(yaw), 0.0],
+                                [0.0, 0.0, 1.0]])
+            cornerPosInVelo = np.dot(rotMat, trackletBox) + np.tile(translation, (8, 1)).T
+            frame_tracklets[absoluteFrameNumber] = frame_tracklets[absoluteFrameNumber] + [cornerPosInVelo]
+            frame_tracklets_types[absoluteFrameNumber] = frame_tracklets_types[absoluteFrameNumber] + [tracklet.objectType]
+    return (frame_tracklets, frame_tracklets_types)
+</pre>
+<h4>Visualization</h4><hr>
+In order to visualize the data we will create three functions: draw_box, display_frame_statistics, and draw_point_cloud. We start by defining the
+color classification for each target—car = blue, tram = red, cyclist = green etc—which will show up in our later visualizations. The data is organized in frames. 
+In order to visualize all of the data, we create a simple loop in the range of the number of frames, saving a point cloud for each frame. 
+
+<pre>
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+colors = {
+    'Car': 'b',
+    'Tram': 'r',
+    'Cyclist': 'g',
+    'Van': 'c',
+    'Truck': 'm',
+    'Pedestrian': 'y',
+    'Sitter': 'k'
+}
+axes_limits = [
+                [-20, 80], # X axis range
+                [-20, 20], # Y axis range
+                [-3, 10]   # Z axis range
+                ]
+axes_str = ['X', 'Y', 'Z']
+
+def draw_box(pyplot_axis, vertices, axes=[0, 1, 2], color='black'):
+    
+    """
+        Draws a bounding 3D box in a pyplot axis.
+        
+        Parameters
+        ----------
+        pyplot_axis : Pyplot axis to draw in.
+        vertices    : Array 8 box vertices containing x, y, z coordinates.
+        axes        : Axes to use. Defaults to `[0, 1, 2]`, e.g. x, y and z axes.
+        color       : Drawing color. Defaults to `black`.
+        """
+    vertices = vertices[axes, :]
+    connections = [
+                    [0, 1], [1, 2], [2, 3], [3, 0],  # Lower plane parallel to Z=0 plane
+                    [4, 5], [5, 6], [6, 7], [7, 4],  # Upper plane parallel to Z=0 plane
+                    [0, 4], [1, 5], [2, 6], [3, 7]  # Connections between upper and lower planes
+                    ]
+    for connection in connections:
+        pyplot_axis.plot(*vertices[:, connection], c=color, lw=0.5)
+
+def display_frame_statistics(dataset, tracklet_rects, tracklet_types, frame, points=0.2):
+    """
+        Displays statistics for a single frame. Draws camera data, 3D plot of the lidar point cloud data and point cloud
+        projections to various planes.
+        
+        Parameters
+        ----------
+        dataset         : `raw` dataset.
+        tracklet_rects  : Dictionary with tracklet bounding boxes coordinates.
+        tracklet_types  : Dictionary with tracklet types.
+        frame           : Absolute number of the frame.
+        points          : Fraction of lidar points to use. Defaults to `0.2`, e.g. 20%.
+        """
+    dataset_gray = list(dataset.gray)
+    dataset_rgb = list(dataset.rgb)
+    dataset_velo = list(dataset.velo)
+    
+    points_step = int(1. / points)
+    point_size = 0.01 * (1. / points)
+    velo_range = range(0, dataset_velo[frame].shape[0], points_step)
+    velo_frame = dataset_velo[frame][velo_range, :]
+    def draw_point_cloud(ax, title, axes=[0, 1, 2], xlim3d=None, ylim3d=None, zlim3d=None):
+        """
+            Convenient method for drawing various point cloud projections as a part of frame statistics.
+        """
+        ax.scatter(*np.transpose(velo_frame[:, axes]), s=point_size, c=velo_frame[:, 3], cmap='gray')
+        ax.set_title(title)
+        ax.set_xlabel('{} axis'.format(axes_str[axes[0]]))
+        ax.set_ylabel('{} axis'.format(axes_str[axes[1]]))
+        if len(axes) > 2:
+            ax.set_xlim3d(*axes_limits[axes[0]])
+            ax.set_ylim3d(*axes_limits[axes[1]])
+            ax.set_zlim3d(*axes_limits[axes[2]])
+            ax.set_zlabel('{} axis'.format(axes_str[axes[2]]))
+        else:
+            ax.set_xlim(*axes_limits[axes[0]])
+            ax.set_ylim(*axes_limits[axes[1]])
+        # User specified limits
+        if xlim3d!=None:
+            ax.set_xlim3d(xlim3d)
+        if ylim3d!=None:
+            ax.set_ylim3d(ylim3d)
+        if zlim3d!=None:
+            ax.set_zlim3d(zlim3d)
+        
+        for t_rects, t_type in zip(tracklet_rects[frame], tracklet_types[frame]):
+            draw_box(ax, t_rects, axes=axes, color=colors[t_type])
+
+    # Draw point cloud data as 3D plot
+    f2 = plt.figure(figsize=(15, 8))
+    ax2 = f2.add_subplot(111, projection='3d')
+    draw_point_cloud(ax2, 'Velodyne scan', xlim3d=(-10,30))
+    filename='./test_2/frame'+str(frame)+'.png'
+    plt.tight_layout()
+    plt.savefig(filename, dpi=96)
+    print("frame {} saved....".format(i))
+    plt.close()
+    plt.clf()
+    plt.cla()
+    </pre>
+<p>We now have n images in the format frame%n.png. The images can be compiled into a gif in bash using <a id = "inline" href = "http://www.imagemagick.org">ImageMagick</a></p>
+<pre>
+convert -delay 10 'frame%d.png[0-n]' output_full.gif
+</pre>
+<h4>Results</h4><hr>
+<img src = "output_full.gif">
+  </div>
+<footer class = "site-footer">
+    Made with <i class="icon ion-ios-heart-outline"></i>
+    </footer>
+</body>
