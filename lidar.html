@@ -226,14 +226,14 @@ axes_str = ['X', 'Y', 'Z']
 def draw_box(pyplot_axis, vertices, axes=[0, 1, 2], color='black'):
     
     """
-    Draws a bounding 3D box in a pyplot axis.
-    
-    Parameters
-    ----------
-    pyplot_axis : Pyplot axis to draw in.
-    vertices    : Array 8 box vertices containing x, y, z coordinates.
-    axes        : Axes to use. Defaults to `[0, 1, 2]`, e.g. x, y and z axes.
-    color       : Drawing color. Defaults to `black`.
+        Draws a bounding 3D box in a pyplot axis.
+        
+        Parameters
+        ----------
+        pyplot_axis : Pyplot axis to draw in.
+        vertices    : Array 8 box vertices containing x, y, z coordinates.
+        axes        : Axes to use. Defaults to `[0, 1, 2]`, e.g. x, y and z axes.
+        color       : Drawing color. Defaults to `black`.
     """
     vertices = vertices[axes, :]
     connections = [
