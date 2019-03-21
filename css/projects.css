@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5, h6, p, hr, blockquote, figure, pre, ol, dl, table {
   /* text-decoration: none; */
   font-weight: bold;
 }
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1000px) {
   .code {
     width: 55% !important;
     margin: auto !important;

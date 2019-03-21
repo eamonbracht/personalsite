@@ -92,7 +92,7 @@ In this post, we will import, parse and visualize <a id = "inline" href = "http:
 <h4>Implementation</h4>
 <hr>
 Begin by install <a id = "inline" href = "https://pypi.org/project/pykitti/">pykitti</a> and a LIDAR dataset of your choice which can be found <a id = "inline" href = "http://www.cvlibs.net/datasets/kitti/raw_data.php">here</a>. The code below is a varation on
-the sample code provided in the <a id = "inline" href = "https://github.com/utiasSTARS/pykitti">documentation</a> for the library.  
+the sample code provided in the <a id = "inline" href = "https://github.com/utiasSTARS/pykitti">documentation</a> for the library.
 <pre>
   import numpy as np
   import pykitti
@@ -114,7 +114,7 @@ the sample code provided in the <a id = "inline" href = "https://github.com/utia
           Returns
           -------
           Loaded dataset of type `raw`.
-          """
+      """
       dataset = pykitti.raw(basedir, date, drive)
       
       # Load the data
@@ -132,6 +132,9 @@ the sample code provided in the <a id = "inline" href = "https://github.com/utia
       
       return dataset
 </pre>
+<h4>Cameras</h4><hr>
+The dataset contains not just LIDAR data but also visual data. Although not as interesting as the LIDAR data itself, it's worth understanding as more advanced implementations might involve the combination of multiple data streams, including video. Each car is equippped with 4 forward facing cameras, two RGB and two gray scale. 
+<img src = "cameras.png">
 <h4>XML Parsing</h4><hr>
 <p>In order to make use of this information, we have to parse XML files containing tracklet info. Fortunately, there already exists a method for parsing tracklets (e.g. dataset labels) originally created by Christian Herdtweck at the Max Planck Institute for Biological Cybernetics. 
   It can be downloaded <a id = "inline" href = "http://cvlibs.net/datasets/kitti/downloads/parseTrackletXML.p">here</a>. Include this .py file in the root directory of your project.
@@ -153,7 +156,7 @@ def load_tracklets_for_frames(n_frames, xml_path):
         Tuple of dictionaries with integer keys corresponding to absolute frame numbers and arrays as values. First array
         contains coordinates of bounding box vertices for each object in the frame, and the second array contains objects
         types as strings.
-        """
+    """
     tracklets = xmlParser.parseXML(xml_path)
     
     frame_tracklets = {}
@@ -191,7 +194,14 @@ def load_tracklets_for_frames(n_frames, xml_path):
 <h4>Visualization</h4><hr>
 In order to visualize the data we will create three functions: draw_box, display_frame_statistics, and draw_point_cloud. We start by defining the
 color classification for each target—car = blue, tram = red, cyclist = green etc—which will show up in our later visualizations. The data is organized in frames. 
-In order to visualize all of the data, we create a simple loop in the range of the number of frames, saving a point cloud for each frame. 
+In order to visualize all of the data, we create a simple loop in the range of the number of frames, saving a point cloud for each frame. Because we are visualizing this data we 
+will randomly sample 20% of the data points to prevent clumping. 
+
+<img src = "frame73.png">
+
+Here is one of those frames, in this case frame 73. We can see one blue outline and two green outlines. Based on the dictionary we created, we know that corresponds to a car and two cyclicsts. 
+
+
 
 <pre>
 import matplotlib.pyplot as plt
@@ -216,15 +226,15 @@ axes_str = ['X', 'Y', 'Z']
 def draw_box(pyplot_axis, vertices, axes=[0, 1, 2], color='black'):
     
     """
-        Draws a bounding 3D box in a pyplot axis.
-        
-        Parameters
-        ----------
-        pyplot_axis : Pyplot axis to draw in.
-        vertices    : Array 8 box vertices containing x, y, z coordinates.
-        axes        : Axes to use. Defaults to `[0, 1, 2]`, e.g. x, y and z axes.
-        color       : Drawing color. Defaults to `black`.
-        """
+    Draws a bounding 3D box in a pyplot axis.
+    
+    Parameters
+    ----------
+    pyplot_axis : Pyplot axis to draw in.
+    vertices    : Array 8 box vertices containing x, y, z coordinates.
+    axes        : Axes to use. Defaults to `[0, 1, 2]`, e.g. x, y and z axes.
+    color       : Drawing color. Defaults to `black`.
+    """
     vertices = vertices[axes, :]
     connections = [
                     [0, 1], [1, 2], [2, 3], [3, 0],  # Lower plane parallel to Z=0 plane
@@ -246,7 +256,7 @@ def display_frame_statistics(dataset, tracklet_rects, tracklet_types, frame, poi
         tracklet_types  : Dictionary with tracklet types.
         frame           : Absolute number of the frame.
         points          : Fraction of lidar points to use. Defaults to `0.2`, e.g. 20%.
-        """
+    """
     dataset_gray = list(dataset.gray)
     dataset_rgb = list(dataset.rgb)
     dataset_velo = list(dataset.velo)
@@ -300,7 +310,15 @@ convert -delay 10 'frame%d.png[0-n]' output_full.gif
 </pre>
 <h4>Results</h4><hr>
 <img src = "output_full.gif">
+
+
+<h4>References</h4><hr>
+<ol>
+  <li>Github: <a id = "inline" href = "https://github.com/navoshta/KITTI-Dataset">KITTI Dataset Examination</a></li>
+  <li>pykitti:  <a id = "inline" href = "https://github.com/utiasSTARS/pykitti">demo_raw.py</a></li>
+</ol>
   </div>
+
 <footer class = "site-footer">
     Made with <i class="icon ion-ios-heart-outline"></i>
     </footer>
