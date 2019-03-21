@@ -22,7 +22,7 @@ h4 {
   /* margin-left: 5%; */
   font-family: Arial
 }
-h1, h2, h3, h4, h5, h6, p, hr, blockquote, figure, pre, ul, ol, dl, table {
+h1, h2, h3, h4, h5, h6, p, hr, blockquote, figure, pre, ol, dl, table {
   margin: 2rem 0 !important;
   padding: 0;
 }
